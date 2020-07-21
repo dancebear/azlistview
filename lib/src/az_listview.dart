@@ -1,6 +1,7 @@
 import 'package:azlistview/src/az_common.dart';
 import 'package:azlistview/src/index_bar.dart';
 import 'package:azlistview/src/suspension_view.dart';
+import 'package:azlistview/src/event_bus.dart';
 import 'package:flutter/material.dart';
 
 /// Called to build children for the listview.
@@ -100,11 +101,15 @@ class _AzListViewState extends State<AzListView> {
   String _indexBarHint = "";
 
   ScrollController _scrollController;
+  GlobalKey _headerKey = GlobalKey();
+
+  int _height = 0;
 
   @override
   void initState() {
     super.initState();
     _scrollController = widget.controller ?? ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getWidgetHeight());
   }
 
   @override
@@ -165,7 +170,8 @@ class _AzListViewState extends State<AzListView> {
             itemBuilder: (BuildContext context, int index) {
               if (index == 0 && _cityList[index] is _Header) {
                 return SizedBox(
-                    height: widget.header.height.toDouble(),
+                    key: _headerKey,
+                    // height: widget.header.height.toDouble(),
                     child: widget.header.builder(context));
               }
               return widget.itemBuilder(context, _cityList[index]);
@@ -227,5 +233,11 @@ class _AzListViewState extends State<AzListView> {
     }
 
     return new Stack(children: children);
+  }
+
+  _getWidgetHeight() {
+    final RenderBox widgetObject = _headerKey.currentContext.findRenderObject();
+    double height = widgetObject.size.height;
+    EventBus.getInstance().fire(height);
   }
 }

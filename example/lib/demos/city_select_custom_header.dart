@@ -161,7 +161,6 @@ class _CitySelectCustomHeaderRouteState
               onSusTagChanged: _onSusTagChanged,
               header: AzListViewHeader(
                   tag: "★",
-                  height: 140,
                   builder: (context) {
                     return _buildHeader();
                   }),

@@ -1,5 +1,7 @@
 import 'package:azlistview/src/az_common.dart';
+import 'package:azlistview/src/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 /// on all sus section callback(map: Used to scroll the list to the specified tag location).
 typedef void OnSusSectionCallBack(Map<String, int> map);
@@ -58,13 +60,14 @@ class _SuspensionWidgetState extends State<SuspensionView> {
 
   List<int> _suspensionSectionList = new List();
   Map<String, int> _suspensionSectionMap = new Map();
+  int _headerHeight=0;
+  StreamSubscription<double> _subscription;
 
   @override
   void initState() {
     super.initState();
-    if (widget.header != null) {
-      _suspensionTop = -widget.header.height;
-    }
+    _suspensionTop=0;
+    _headerHeight =0;
     widget.controller.addListener(() {
       int offset = widget.controller.offset.toInt();
       int _index = _getIndex(offset);
@@ -75,14 +78,24 @@ class _SuspensionWidgetState extends State<SuspensionView> {
         }
       }
     });
+    _subscription = EventBus.getInstance().on<double>().listen((event) {
+      _headerHeight = event.toInt();
+      _suspensionTop = -_headerHeight;
+      setState(() {});
+    });
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    _subscription.cancel();
   }
 
   int _getIndex(int offset) {
-    if (widget.header != null && offset < widget.header.height) {
-      if (_suspensionTop != -widget.header.height &&
-          widget.suspensionWidget != null) {
+    if (widget.header != null && offset < _headerHeight) {
+      if (_suspensionTop != -_headerHeight && widget.suspensionWidget != null) {
         setState(() {
-          _suspensionTop = -widget.header.height;
+          _suspensionTop = -_headerHeight;
         });
       }
       return 0;
@@ -117,7 +130,7 @@ class _SuspensionWidgetState extends State<SuspensionView> {
     String tag;
     if (widget.header != null) {
       _suspensionSectionMap[widget.header.tag] = 0;
-      offset = widget.header.height;
+      offset = _headerHeight;
     }
     widget.data?.forEach((v) {
       if (tag != v.getSuspensionTag()) {

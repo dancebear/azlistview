@@ -10,12 +10,12 @@ abstract class ISuspensionBean {
 /// AzListView Header.
 class AzListViewHeader {
   AzListViewHeader({
-    @required this.height,
+    // @required this.height,
     @required this.builder,
     this.tag = "↑",
   });
 
-  final int height;
+  // final int height;
   final String tag;
   final WidgetBuilder builder;
 }

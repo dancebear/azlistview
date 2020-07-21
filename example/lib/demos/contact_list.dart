@@ -131,11 +131,9 @@ class _ContactListRouteState extends State<ContactListRoute> {
       isUseRealIndex: true,
       itemHeight: _itemHeight,
       suspensionHeight: _suspensionHeight,
-      header: AzListViewHeader(
-          height: 180,
-          builder: (context) {
-            return _buildHeader();
-          }),
+      header: AzListViewHeader(builder: (context) {
+        return _buildHeader();
+      }),
       indexBarBuilder: (BuildContext context, List<String> tags,
           IndexBarTouchCallback onTouch) {
         return Container(
